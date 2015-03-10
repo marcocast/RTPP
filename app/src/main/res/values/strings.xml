@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RTPP</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_logout">Logout</string>
+    <string name="title_activity_signin">SigninActivity</string>
+    <string name="title_activity_signup">SignupActivity</string>
+    <string name="title_activity_join_start">JoinStartActivity</string>
+    <string name="title_activity_join">JoinActivity</string>
+    <string name="title_activity_estimation">EstimationActivity</string>
+
+</resources>
