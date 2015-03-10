@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
@@ -17,6 +18,12 @@ public class EstimationActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estimation);
+
+        Intent intent = getIntent();
+
+        final TextView textSessionName = (TextView)findViewById(R.id.session_name);
+
+        textSessionName.setText(intent.getStringExtra(JoinStartActivity.EXTRA_SESSION_NAME));
     }
 
 

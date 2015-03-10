@@ -26,7 +26,7 @@ public class SigninActivity extends ActionBarActivity {
         final EditText password = (EditText) findViewById(R.id.etPass);
         final Button btnSingIn = (Button) findViewById(R.id.btnSingIn);
 
-        final Intent joinstartIntenet = new Intent(this, JoinStartActivity.class);
+        final Intent joinstartIntent = new Intent(this, JoinStartActivity.class);
 
         btnSingIn.setOnClickListener(new View.OnClickListener() {
 
@@ -39,7 +39,7 @@ public class SigninActivity extends ActionBarActivity {
                         new Firebase.AuthResultHandler() {
                             @Override
                             public void onAuthenticated(AuthData authData) {
-                                startActivity(joinstartIntenet);
+                                startActivity(joinstartIntent);
                             }
 
                             @Override

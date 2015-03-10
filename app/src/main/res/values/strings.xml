@@ -10,4 +10,14 @@
     <string name="title_activity_join">JoinActivity</string>
     <string name="title_activity_estimation">EstimationActivity</string>
 
+
+    <string-array name="sessions_names">
+        <item>falcon</item>
+        <item>lion</item>
+        <item>tiger</item>
+        <item>bear</item>
+        <item>fish</item>
+
+    </string-array>
+
 </resources>
