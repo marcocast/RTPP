@@ -56,7 +56,7 @@ public class JoinStartActivity extends ActionBarActivity {
                 int randomIndex = new Random().nextInt(sessionsNames.length);
                 final String sessionName = sessionsNames[randomIndex] + randomIndex;
 
-                ref.child("sessions").child(authData.getUid()).child(sessionName).child("timestamp").setValue(new Date(), new Firebase.CompletionListener() {
+                ref.child("sessions").child(authData.getUid()).child("name").child(sessionName).setValue(new Date(), new Firebase.CompletionListener() {
                     @Override
                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                         if (firebaseError != null) {
