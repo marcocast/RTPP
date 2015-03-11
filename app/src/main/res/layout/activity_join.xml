@@ -20,7 +20,7 @@
 
 
         <EditText
-            android:id="@+id/etUserName"
+            android:id="@+id/sessionName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="-2dp"
@@ -29,7 +29,7 @@
             android:textColorHint="#bbbbbb"/>
 
         <Button
-            android:id="@+id/btnSingIn"
+            android:id="@+id/btnJoin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"

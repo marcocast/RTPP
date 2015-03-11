@@ -21,23 +21,29 @@
         </activity>
         <activity
             android:name=".SigninActivity"
-            android:label="@string/title_activity_signin" >
+            android:label="@string/title_activity_signin"
+            android:parentActivityName=".MainActivity"            >
+
         </activity>
         <activity
             android:name=".SignupActivity"
-            android:label="@string/title_activity_signup" >
+            android:label="@string/title_activity_signup"
+            android:parentActivityName=".MainActivity">
         </activity>
         <activity
             android:name=".JoinStartActivity"
-            android:label="@string/title_activity_join_start" >
+            android:label="@string/title_activity_join_start"
+            android:parentActivityName=".MainActivity">
         </activity>
         <activity
             android:name=".JoinActivity"
-            android:label="@string/title_activity_join" >
+            android:label="@string/title_activity_join"
+            android:parentActivityName=".MainActivity">
         </activity>
         <activity
             android:name=".EstimationActivity"
-            android:label="@string/title_activity_estimation" >
+            android:label="@string/title_activity_estimation"
+            android:parentActivityName=".MainActivity">
         </activity>
     </application>
 

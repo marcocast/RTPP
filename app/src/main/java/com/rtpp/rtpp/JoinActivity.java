@@ -5,18 +5,73 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class JoinActivity extends ActionBarActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join);
+        Firebase.setAndroidContext(this);
+        final EditText sessionName = (EditText) findViewById(R.id.sessionName);
+        final Intent estimateIntent = new Intent(this, EstimationActivity.class);
+
+        final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
+
+        final AuthData authData = ref.getAuth();
+        final Map<String, String> post1 = new HashMap<String, String>();
+        post1.put("card", "none");
+
+        Button joinButton = (Button) findViewById(R.id.btnJoin);
+        joinButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                ref.child("session-user").child(sessionName.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(final DataSnapshot snapshot) {
+                        if(snapshot.getValue()!=null){
+                            String sessionOwner=(String)snapshot.getValue();
+                            ref.child("user-session").child(sessionOwner).child(sessionName.getText().toString()).child("participants").child(authData.getUid()).setValue(post1, new Firebase.CompletionListener() {
+                                @Override
+                                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                                    if (firebaseError != null) {
+                                        Toast.makeText(JoinActivity.this, "Session could not be created.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                                    } else {
+                                        estimateIntent.putExtra(JoinStartActivity.EXTRA_SESSION_NAME, sessionName.getText().toString());
+                                        startActivity(estimateIntent);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+                    }
+                });
+            }
+
+        });
+
+
+
+
     }
 
 
