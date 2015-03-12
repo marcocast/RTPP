@@ -1,6 +1,8 @@
 package com.rtpp.rtpp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -25,12 +27,12 @@ import java.util.Random;
 
 public class JoinStartActivity extends ActionBarActivity {
 
-    public final static String EXTRA_SESSION_NAME = "com.rtpp.rtpp.EXTRA_SESSION_NAME";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_start);
+        final SharedPreferences sharedPref = this.getSharedPreferences("RTPP", Context.MODE_PRIVATE);
+
         final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
 
         Button joinButton = (Button) findViewById(R.id.btnJoin);
@@ -70,7 +72,10 @@ public class JoinStartActivity extends ActionBarActivity {
                     public void onDataChange(DataSnapshot snapshot) {
                         if(snapshot.child(authData.getUid()).getValue()!=null){
                             Map<String,Object> newPost=(Map<String,Object>)snapshot.child(authData.getUid()).getValue();
-                            estimateIntent.putExtra(EXTRA_SESSION_NAME, newPost.keySet().iterator().next());
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString("sessionOwner", authData.getUid());
+                            editor.putString("sessionName", newPost.keySet().iterator().next());
+                            editor.commit();
                             startActivity(estimateIntent);
                         }else{
                             ref.child("session-user").child(sessionName).setValue(authData.getUid());
@@ -80,7 +85,10 @@ public class JoinStartActivity extends ActionBarActivity {
                                     if (firebaseError != null) {
                                         Toast.makeText(JoinStartActivity.this, "\"Session could not be created.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                                     } else {
-                                        estimateIntent.putExtra(EXTRA_SESSION_NAME, sessionName);
+                                        SharedPreferences.Editor editor = sharedPref.edit();
+                                        editor.putString("sessionOwner", authData.getUid());
+                                        editor.putString("sessionName", sessionName);
+                                        editor.commit();
                                         startActivity(estimateIntent);
                                     }
                                 }

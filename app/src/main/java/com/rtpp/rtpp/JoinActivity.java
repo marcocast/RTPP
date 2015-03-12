@@ -1,6 +1,8 @@
 package com.rtpp.rtpp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -27,6 +29,9 @@ public class JoinActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join);
+        final SharedPreferences sharedPref = this.getSharedPreferences("RTPP", Context.MODE_PRIVATE);
+
+
         Firebase.setAndroidContext(this);
         final EditText sessionName = (EditText) findViewById(R.id.sessionName);
         final Intent estimateIntent = new Intent(this, EstimationActivity.class);
@@ -47,14 +52,17 @@ public class JoinActivity extends ActionBarActivity {
                     @Override
                     public void onDataChange(final DataSnapshot snapshot) {
                         if(snapshot.getValue()!=null){
-                            String sessionOwner=(String)snapshot.getValue();
+                            final String sessionOwner=(String)snapshot.getValue();
                             ref.child("user-session").child(sessionOwner).child(sessionName.getText().toString()).child("participants").child(authData.getUid()).setValue(post1, new Firebase.CompletionListener() {
                                 @Override
                                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                                     if (firebaseError != null) {
                                         Toast.makeText(JoinActivity.this, "Session could not be created.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                                     } else {
-                                        estimateIntent.putExtra(JoinStartActivity.EXTRA_SESSION_NAME, sessionName.getText().toString());
+                                        SharedPreferences.Editor editor = sharedPref.edit();
+                                        editor.putString("sessionName", sessionName.getText().toString());
+                                        editor.putString("sessionOwner", sessionOwner);
+                                        editor.commit();
                                         startActivity(estimateIntent);
                                     }
                                 }

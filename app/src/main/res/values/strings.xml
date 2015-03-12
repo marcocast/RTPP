@@ -19,5 +19,7 @@
         <item>fish</item>
 
     </string-array>
+    <string name="title_activity_card">CardActivity</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

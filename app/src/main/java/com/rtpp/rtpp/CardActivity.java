@@ -3,56 +3,59 @@ package com.rtpp.rtpp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class EstimationActivity extends ActionBarActivity {
+public class CardActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_estimation);
-
+        setContentView(R.layout.activity_card);
         Firebase.setAndroidContext(this);
 
         final SharedPreferences sharedPref = this.getSharedPreferences("RTPP", Context.MODE_PRIVATE);
 
-        final Intent intent = getIntent();
 
-        final Intent cardIntent = new Intent(this, CardActivity.class);
+        final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
+
+        final AuthData authData = ref.getAuth();
 
         final TextView textSessionName = (TextView)findViewById(R.id.session_name);
 
-        textSessionName.setText(sharedPref.getString("sessionName", ""));
+        final String sessionName = sharedPref.getString("sessionName", "");
+        final String sessionOwner = sharedPref.getString("sessionOwner", "");
 
-        GridView gridview = (GridView) findViewById(R.id.gridview);
-        gridview.setAdapter(new ImageAdapter(this));
+        textSessionName.setText(sessionName);
+
+        ImageView img = (ImageView) findViewById(R.id.imageCard);
+
+        final String cardIndex =  sharedPref.getString("card", "");
+
+        img.setImageResource(R.drawable.card8);
+
+        final Map<String, Object> post1 = new HashMap<String, Object>();
+        post1.put("card", cardIndex);
 
 
+        ref.child("user-session/" + sessionOwner + "/" + sessionName + "/participants/" + authData.getUid()).updateChildren(post1);
 
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Toast.makeText(EstimationActivity.this, "" + position, Toast.LENGTH_SHORT).show();
-
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("card", String.valueOf(position));
-                editor.commit();
-
-                startActivity(cardIntent);
-            }
-        });
 
     }
 
@@ -60,7 +63,7 @@ public class EstimationActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_estimation, menu);
+        getMenuInflater().inflate(R.menu.menu_card, menu);
         return true;
     }
 
