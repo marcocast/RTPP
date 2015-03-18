@@ -107,6 +107,7 @@ public class CreateActivity extends ActionBarActivity {
                                                                     SharedPreferences.Editor editor = sharedPref.edit();
                                                                     editor.putString("sessionOwner", firebaseFacade.getUid());
                                                                     editor.putString("sessionName", sessionName);
+                                                                    editor.putString("sessionType", "1");
                                                                     editor.commit();
 
                                                                     startActivity(estimateIntent);

@@ -61,9 +61,9 @@ public class JoinActivity extends ActionBarActivity {
     }
 
     private void joinSession(final FirebaseFacade firebaseFacade, final String sessionName, final Map<String, String> userName, final SharedPreferences.Editor editor, final Intent estimateIntent) {
-        firebaseFacade.getRef().child("session-participants").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
+        firebaseFacade.getRef().child("session-type").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            public void onDataChange(final DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
                     firebaseFacade.getRef().child("session-participants").child(sessionName).child(firebaseFacade.getUid()).setValue(userName, new Firebase.CompletionListener() {
                         @Override
@@ -81,6 +81,7 @@ public class JoinActivity extends ActionBarActivity {
                                         } else {
                                             editor.putString("sessionOwner", firebaseFacade.getUid());
                                             editor.putString("sessionName", sessionName);
+                                            editor.putString("sessionType", snapshot.child("type").getValue().toString());
                                             editor.commit();
                                             startActivity(estimateIntent);
                                         }
