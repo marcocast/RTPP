@@ -19,6 +19,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.MutableData;
 import com.firebase.client.Transaction;
 import com.firebase.client.ValueEventListener;
+import com.rtpp.rtpp.firebase.FirebaseFacade;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,9 +32,14 @@ public class JoinStartActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join_start);
-        final SharedPreferences sharedPref = this.getSharedPreferences("RTPP", Context.MODE_PRIVATE);
 
-        final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
+        final FirebaseFacade firebaseFacade = new FirebaseFacade(this);
+        if (!firebaseFacade.isLogged()) {
+            startActivity(new Intent(this, MainActivity.class));
+        }
+
+
+        final SharedPreferences sharedPref = this.getSharedPreferences("RTPP", Context.MODE_PRIVATE);
 
         Button joinButton = (Button) findViewById(R.id.btnJoin);
         Button createButton = (Button) findViewById(R.id.btnCreate);
@@ -81,20 +87,12 @@ public class JoinStartActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
-            final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
 
-            Button logoutButton = (Button) findViewById(R.id.action_logout);
-
-            final Intent intentSigninIntent = new Intent(this, SigninActivity.class);
-
-            final AuthData authData = ref.getAuth();
-
-
-            if (authData != null) {
-                ref.unauth();
-                startActivity(intentSigninIntent);
+            final FirebaseFacade firebaseFacade = new FirebaseFacade(this);
+            if (firebaseFacade.isLogged()) {
+                firebaseFacade.logout();
+                startActivity(new Intent(this, JoinStartActivity.class));
             }
-
 
             return true;
         }

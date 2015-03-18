@@ -17,6 +17,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.rtpp.rtpp.firebase.FirebaseFacade;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,17 +30,18 @@ public class JoinActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join);
+
+        final FirebaseFacade firebaseFacade = new FirebaseFacade(this);
+        if (!firebaseFacade.isLogged()) {
+            startActivity(new Intent(this, MainActivity.class));
+        }
+
         final SharedPreferences sharedPref = this.getSharedPreferences("RTPP", Context.MODE_PRIVATE);
 
-
-        Firebase.setAndroidContext(this);
         final EditText sessionNameText = (EditText) findViewById(R.id.sessionName);
         final Intent estimateIntent = new Intent(this, EstimationActivity.class);
 
 
-        final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
-
-        final AuthData authData = ref.getAuth();
         final Map<String, String> userName = new HashMap<String, String>();
         userName.put("username", sharedPref.getString("username", ""));
 
@@ -51,41 +53,7 @@ public class JoinActivity extends ActionBarActivity {
 
                 final String sessionName = sessionNameText.getText().toString();
 
-                ref.child("session-owner").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(final DataSnapshot snapshot) {
-                        if(snapshot.getValue()!=null){
-                            ref.child("session-participants").child(sessionName).child(authData.getUid()).setValue(userName, new Firebase.CompletionListener() {
-                                @Override
-                                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                                    if (firebaseError != null) {
-                                        Toast.makeText(JoinActivity.this, "Session could not be joined.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
-                                    } else {
-                                        final Map<String, String> cardPost = new HashMap<String, String>();
-                                        cardPost.put("card", "none");
-                                        ref.child("session-votes").child(sessionName).child(authData.getUid()).setValue(cardPost, new Firebase.CompletionListener() {
-                                            @Override
-                                            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                                                if (firebaseError != null) {
-                                                    Toast.makeText(JoinActivity.this, "Session could not be joined.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
-                                                } else {
-                                                    SharedPreferences.Editor editor = sharedPref.edit();
-                                                    editor.putString("sessionOwner", authData.getUid());
-                                                    editor.putString("sessionName", sessionName);
-                                                    editor.commit();
-                                                    startActivity(estimateIntent);
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-                    }
-                });
+                joinSession(firebaseFacade, sessionName, userName, sharedPref.edit(), estimateIntent);
             }
 
         });
@@ -93,6 +61,43 @@ public class JoinActivity extends ActionBarActivity {
 
 
 
+    }
+
+    private void joinSession(final FirebaseFacade firebaseFacade, final String sessionName, final Map<String, String> userName, final SharedPreferences.Editor editor, final Intent estimateIntent) {
+        firebaseFacade.getRef().child("session-owner").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot snapshot) {
+                if(snapshot.getValue()!=null){
+                    firebaseFacade.getRef().child("session-participants").child(sessionName).child(firebaseFacade.getUid()).setValue(userName, new Firebase.CompletionListener() {
+                        @Override
+                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                            if (firebaseError != null) {
+                                Toast.makeText(JoinActivity.this, "Session could not be joined.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                            } else {
+                                final Map<String, String> cardPost = new HashMap<String, String>();
+                                cardPost.put("card", "none");
+                                firebaseFacade.getRef().child("session-votes").child(sessionName).child(firebaseFacade.getUid()).setValue(cardPost, new Firebase.CompletionListener() {
+                                    @Override
+                                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                                        if (firebaseError != null) {
+                                            Toast.makeText(JoinActivity.this, "Session could not be joined.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                                        } else {
+                                            editor.putString("sessionOwner", firebaseFacade.getUid());
+                                            editor.putString("sessionName", sessionName);
+                                            editor.commit();
+                                            startActivity(estimateIntent);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
     }
 
 
@@ -112,18 +117,11 @@ public class JoinActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
-            final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
 
-            Button logoutButton = (Button) findViewById(R.id.action_logout);
-
-            final Intent intentSigninIntent = new Intent(this, SigninActivity.class);
-
-            final AuthData authData = ref.getAuth();
-
-
-            if (authData != null) {
-                ref.unauth();
-                startActivity(intentSigninIntent);
+            final FirebaseFacade firebaseFacade = new FirebaseFacade(this);
+            if (firebaseFacade.isLogged()) {
+                firebaseFacade.logout();
+                startActivity(new Intent(this, JoinStartActivity.class));
             }
 
 

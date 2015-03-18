@@ -17,6 +17,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.rtpp.rtpp.firebase.FirebaseFacade;
 
 import java.util.Map;
 
@@ -27,6 +28,11 @@ public class SigninActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+
+        final FirebaseFacade firebaseFacade = new FirebaseFacade(this);
+        if (firebaseFacade.isLogged()) {
+            startActivity(new Intent(this, JoinStartActivity.class));
+        }
 
         final EditText email = (EditText) findViewById(R.id.etEmail);
         final EditText password = (EditText) findViewById(R.id.etPass);
@@ -42,76 +48,40 @@ public class SigninActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
-
-                ref.authWithPassword(email.getText().toString(), password.getText().toString(),
-                        new Firebase.AuthResultHandler() {
-                            @Override
-                            public void onAuthenticated(AuthData authData) {
-                                ref.child("users").child(authData.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(final DataSnapshot snapshot) {
-                                        if(snapshot.getValue()!=null){
-                                            Map<String, Object> myUser = (Map<String, Object>) snapshot.getValue();
-                                            SharedPreferences.Editor editor = sharedPref.edit();
-                                            editor.putString("username", myUser.get("username").toString());
-                                            editor.commit();
-                                        }
-                                    }
-                                    @Override
-                                    public void onCancelled(FirebaseError firebaseError) {
-                                    }
-                                });
-                                startActivity(joinstartIntent);
-                            }
-
-                            @Override
-                            public void onAuthenticationError(FirebaseError firebaseError) {
-                                Toast.makeText(SigninActivity.this, "Error logging in user: " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        });
-
+                signIn(firebaseFacade.getRef(), email.getText().toString(), password.getText().toString(), sharedPref.edit(), joinstartIntent);
 
             }
 
         });
     }
 
+    private void signIn(final Firebase ref, String email, String password, final SharedPreferences.Editor editor, final Intent joinstartIntent) {
+        ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
+                    @Override
+                    public void onAuthenticated(AuthData authData) {
+                        ref.child("users").child(authData.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(final DataSnapshot snapshot) {
+                                if (snapshot.getValue() != null) {
+                                    Map<String, Object> myUser = (Map<String, Object>) snapshot.getValue();
+                                    editor.putString("username", myUser.get("username").toString());
+                                    editor.commit();
+                                }
+                            }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_signin, menu);
-        return true;
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
+                            }
+                        });
+                        startActivity(joinstartIntent);
+                    }
+
+                    @Override
+                    public void onAuthenticationError(FirebaseError firebaseError) {
+                        Toast.makeText(SigninActivity.this, "Error logging in user: " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
-
-            Button logoutButton = (Button) findViewById(R.id.action_logout);
-
-            final Intent intentSigninIntent = new Intent(this, SigninActivity.class);
-
-            final AuthData authData = ref.getAuth();
-
-
-            if (authData != null) {
-                ref.unauth();
-                startActivity(intentSigninIntent);
-            }
-
-
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

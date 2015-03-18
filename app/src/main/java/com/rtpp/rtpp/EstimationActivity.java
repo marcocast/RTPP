@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
+import com.rtpp.rtpp.firebase.FirebaseFacade;
 
 
 public class EstimationActivity extends ActionBarActivity {
@@ -73,21 +74,11 @@ public class EstimationActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
-            final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
-
-            Button logoutButton = (Button) findViewById(R.id.action_logout);
-
-            final Intent intentSigninIntent = new Intent(this, SigninActivity.class);
-
-            final AuthData authData = ref.getAuth();
-
-
-            if (authData != null) {
-                ref.unauth();
-                startActivity(intentSigninIntent);
+            final FirebaseFacade firebaseFacade = new FirebaseFacade(this);
+            if (firebaseFacade.isLogged()) {
+                firebaseFacade.logout();
+                startActivity(new Intent(this, JoinStartActivity.class));
             }
-
-
             return true;
         }
 

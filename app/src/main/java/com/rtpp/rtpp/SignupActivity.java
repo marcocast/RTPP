@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.rtpp.rtpp.firebase.FirebaseFacade;
 
 import java.util.Map;
 
@@ -25,6 +26,11 @@ public class SignupActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        final FirebaseFacade firebaseFacade = new FirebaseFacade(this);
+        if (firebaseFacade.isLogged()) {
+            startActivity(new Intent(this, JoinStartActivity.class));
+        }
 
         Button btnSingIn = (Button) findViewById(R.id.btnSingIn);
         final EditText email = (EditText) findViewById(R.id.etEmail);
@@ -41,45 +47,7 @@ public class SignupActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
-                ref.createUser(email.getText().toString(), password.getText().toString(), new Firebase.ValueResultHandler<Map<String, Object>>() {
-                    @Override
-                    public void onSuccess(final Map<String, Object> result) {
-
-                        ref.child("users").child(result.get("uid").toString()).child("username").setValue(username.getText().toString(), new Firebase.CompletionListener() {
-                            @Override
-                            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                                if (firebaseError != null) {
-                                    Toast.makeText(SignupActivity.this, "Error creating user: " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
-                                } else {
-                                    Toast.makeText(SignupActivity.this, "Successfully created user account with uid: " + result.get("uid"), Toast.LENGTH_LONG).show();
-                                    ref.authWithPassword(email.getText().toString(), password.getText().toString(),
-                                            new Firebase.AuthResultHandler() {
-                                                @Override
-                                                public void onAuthenticated(AuthData authData) {
-                                                    SharedPreferences.Editor editor = sharedPref.edit();
-                                                    editor.putString("username", username.getText().toString());
-                                                    editor.commit();
-                                                    startActivity(joinstartIntenet);
-                                                }
-
-                                                @Override
-                                                public void onAuthenticationError(FirebaseError firebaseError) {
-                                                    Toast.makeText(SignupActivity.this, "Error creating user: " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
-                                                }
-                                            });
-                                }
-                            }
-                        });
-
-
-                    }
-
-                    @Override
-                    public void onError(FirebaseError firebaseError) {
-                        Toast.makeText(SignupActivity.this, "Error creating user: " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
+                signUp(firebaseFacade.getRef(),email.getText().toString(), password.getText().toString(), username.getText().toString(), sharedPref.edit(), joinstartIntenet);
 
 
             }
@@ -87,40 +55,45 @@ public class SignupActivity extends ActionBarActivity {
         });
     }
 
+    private void signUp(final Firebase ref, final String email, final String password, final String username, final SharedPreferences.Editor editor, final Intent joinstartIntenet) {
+        ref.createUser(email, password, new Firebase.ValueResultHandler<Map<String, Object>>() {
+            @Override
+            public void onSuccess(final Map<String, Object> result) {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_signup, menu);
-        return true;
-    }
+                ref.child("users").child(result.get("uid").toString()).child("username").setValue(username, new Firebase.CompletionListener() {
+                    @Override
+                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                        if (firebaseError != null) {
+                            Toast.makeText(SignupActivity.this, "Error creating user: " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(SignupActivity.this, "Successfully created user account with uid: " + result.get("uid"), Toast.LENGTH_LONG).show();
+                            ref.authWithPassword(email, password,
+                                    new Firebase.AuthResultHandler() {
+                                        @Override
+                                        public void onAuthenticated(AuthData authData) {
+                                            editor.putString("username", username);
+                                            editor.commit();
+                                            startActivity(joinstartIntenet);
+                                        }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
-
-            Button logoutButton = (Button) findViewById(R.id.action_logout);
-
-            final Intent intentSigninIntent = new Intent(this, SigninActivity.class);
-
-            final AuthData authData = ref.getAuth();
+                                        @Override
+                                        public void onAuthenticationError(FirebaseError firebaseError) {
+                                            Toast.makeText(SignupActivity.this, "Error creating user: " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                        }
+                    }
+                });
 
 
-            if (authData != null) {
-                ref.unauth();
-                startActivity(intentSigninIntent);
             }
 
-
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+            @Override
+            public void onError(FirebaseError firebaseError) {
+                Toast.makeText(SignupActivity.this, "Error creating user: " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
+
+
 }
