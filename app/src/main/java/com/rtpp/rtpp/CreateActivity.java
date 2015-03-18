@@ -54,10 +54,9 @@ public class CreateActivity extends ActionBarActivity {
                 final String sessionName = sessionNameText.getText().toString();
 
 
-                final Map<String, String> userName = new HashMap<String, String>();
-                userName.put("username", sharedPref.getString("username", ""));
 
-                createSession(firebaseFacade, sessionName, userName, sharedPref.edit(), estimateIntent);
+
+                createSession(firebaseFacade, sessionName, sharedPref, estimateIntent);
 
 
             }
@@ -65,7 +64,7 @@ public class CreateActivity extends ActionBarActivity {
         });
     }
 
-    private void createSession(final FirebaseFacade firebaseFacade, final String sessionName, final Map<String, String> userName, final SharedPreferences.Editor editor, final Intent estimateIntent) {
+    private void createSession(final FirebaseFacade firebaseFacade, final String sessionName, final SharedPreferences sharedPref, final Intent estimateIntent) {
         firebaseFacade.getRef().child("session-participants").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -73,8 +72,9 @@ public class CreateActivity extends ActionBarActivity {
                 if (snapshot.getValue() != null) {
                     Toast.makeText(CreateActivity.this, "Session already exists and cannot be created.", Toast.LENGTH_LONG).show();
 
-                }else {
-
+                } else {
+                    final Map<String, String> userName = new HashMap<String, String>();
+                    userName.put("username", sharedPref.getString("username", ""));
 
                     firebaseFacade.getRef().child("session-participants").child(sessionName).child(firebaseFacade.getUid()).setValue(userName, new Firebase.CompletionListener() {
                         @Override
@@ -90,18 +90,31 @@ public class CreateActivity extends ActionBarActivity {
                                         if (firebaseError != null) {
                                             Toast.makeText(CreateActivity.this, "Session could not be created.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                                         } else {
-
-                                            firebaseFacade.getRef().child("session-owner").child(firebaseFacade.getUid()).setValue(sessionName, new Firebase.CompletionListener() {
+                                            final Map<String, String> cardType = new HashMap<String, String>();
+                                            cardType.put("type", "1");
+                                            firebaseFacade.getRef().child("session-type").child(sessionName).setValue(cardType, new Firebase.CompletionListener() {
                                                 @Override
                                                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                                                     if (firebaseError != null) {
                                                         Toast.makeText(CreateActivity.this, "Session could not be created.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                                                     } else {
-                                                        editor.putString("sessionOwner", firebaseFacade.getUid());
-                                                        editor.putString("sessionName", sessionName);
-                                                        editor.commit();
+                                                        firebaseFacade.getRef().child("session-owner").child(firebaseFacade.getUid()).setValue(sessionName, new Firebase.CompletionListener() {
+                                                            @Override
+                                                            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                                                                if (firebaseError != null) {
+                                                                    Toast.makeText(CreateActivity.this, "Session could not be created.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                                                                } else {
+                                                                    SharedPreferences.Editor editor = sharedPref.edit();
+                                                                    editor.putString("sessionOwner", firebaseFacade.getUid());
+                                                                    editor.putString("sessionName", sessionName);
+                                                                    editor.commit();
 
-                                                        startActivity(estimateIntent);
+                                                                    startActivity(estimateIntent);
+
+
+                                                                }
+                                                            }
+                                                        });
 
 
                                                     }
