@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -59,15 +58,13 @@ public class JoinActivity extends ActionBarActivity {
         });
 
 
-
-
     }
 
     private void joinSession(final FirebaseFacade firebaseFacade, final String sessionName, final Map<String, String> userName, final SharedPreferences.Editor editor, final Intent estimateIntent) {
-        firebaseFacade.getRef().child("session-owner").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
+        firebaseFacade.getRef().child("session-participants").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(final DataSnapshot snapshot) {
-                if(snapshot.getValue()!=null){
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
                     firebaseFacade.getRef().child("session-participants").child(sessionName).child(firebaseFacade.getUid()).setValue(userName, new Firebase.CompletionListener() {
                         @Override
                         public void onComplete(FirebaseError firebaseError, Firebase firebase) {
@@ -92,12 +89,17 @@ public class JoinActivity extends ActionBarActivity {
                             }
                         }
                     });
+                } else {
+                    Toast.makeText(JoinActivity.this, "Session does not exist" , Toast.LENGTH_LONG).show();
+
                 }
             }
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(FirebaseError arg0) {
             }
         });
+
+
     }
 
 

@@ -42,7 +42,6 @@ public class CardActivity extends ActionBarActivity {
         final TextView textSessionName = (TextView)findViewById(R.id.session_name);
 
         final String sessionName = sharedPref.getString("sessionName", "");
-        final String sessionOwner = sharedPref.getString("sessionOwner", "");
 
         textSessionName.setText(sessionName);
 

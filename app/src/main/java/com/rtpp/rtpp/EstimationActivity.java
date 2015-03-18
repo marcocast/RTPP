@@ -30,8 +30,6 @@ public class EstimationActivity extends ActionBarActivity {
 
         final SharedPreferences sharedPref = this.getSharedPreferences("RTPP", Context.MODE_PRIVATE);
 
-        final Intent intent = getIntent();
-
         final Intent cardIntent = new Intent(this, CardActivity.class);
 
         final TextView textSessionName = (TextView)findViewById(R.id.session_name);

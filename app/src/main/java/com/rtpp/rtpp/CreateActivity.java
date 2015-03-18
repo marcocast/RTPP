@@ -3,8 +3,8 @@ package com.rtpp.rtpp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -21,7 +20,6 @@ import com.rtpp.rtpp.firebase.FirebaseFacade;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 
 public class CreateActivity extends ActionBarActivity {
@@ -47,7 +45,6 @@ public class CreateActivity extends ActionBarActivity {
         final EditText sessionNameText = (EditText) findViewById(R.id.sessionName);
 
 
-
         createButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -60,7 +57,7 @@ public class CreateActivity extends ActionBarActivity {
                 final Map<String, String> userName = new HashMap<String, String>();
                 userName.put("username", sharedPref.getString("username", ""));
 
-                createSession(firebaseFacade,sessionName, userName, sharedPref.edit(), estimateIntent);
+                createSession(firebaseFacade, sessionName, userName, sharedPref.edit(), estimateIntent);
 
 
             }
@@ -69,30 +66,32 @@ public class CreateActivity extends ActionBarActivity {
     }
 
     private void createSession(final FirebaseFacade firebaseFacade, final String sessionName, final Map<String, String> userName, final SharedPreferences.Editor editor, final Intent estimateIntent) {
-        firebaseFacade.getRef().child("session-owner").addListenerForSingleValueEvent(new ValueEventListener() {
+        firebaseFacade.getRef().child("session-participants").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                if(snapshot.child(sessionName).getValue() != null){
-                    editor.putString("sessionOwner", firebaseFacade.getUid());
-                    editor.putString("sessionName", sessionName);
-                    editor.commit();
-                    startActivity(estimateIntent);
-                }else{
-                    firebaseFacade.getRef().child("session-owner").child(sessionName).setValue(firebaseFacade.getUid(), new Firebase.CompletionListener() {
+
+                if (snapshot.getValue() != null) {
+                    Toast.makeText(CreateActivity.this, "Session already exists and cannot be created.", Toast.LENGTH_LONG).show();
+
+                }else {
+
+
+                    firebaseFacade.getRef().child("session-participants").child(sessionName).child(firebaseFacade.getUid()).setValue(userName, new Firebase.CompletionListener() {
                         @Override
                         public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                             if (firebaseError != null) {
                                 Toast.makeText(CreateActivity.this, "Session could not be created.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                             } else {
-                                firebaseFacade.getRef().child("session-participants").child(sessionName).child(firebaseFacade.getUid()).setValue(userName, new Firebase.CompletionListener() {
+                                final Map<String, String> cardPost = new HashMap<String, String>();
+                                cardPost.put("card", "none");
+                                firebaseFacade.getRef().child("session-votes").child(sessionName).child(firebaseFacade.getUid()).setValue(cardPost, new Firebase.CompletionListener() {
                                     @Override
                                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                                         if (firebaseError != null) {
                                             Toast.makeText(CreateActivity.this, "Session could not be created.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                                         } else {
-                                            final Map<String, String> cardPost = new HashMap<String, String>();
-                                            cardPost.put("card", "none");
-                                            firebaseFacade.getRef().child("session-votes").child(sessionName).child(firebaseFacade.getUid()).setValue(cardPost, new Firebase.CompletionListener() {
+
+                                            firebaseFacade.getRef().child("session-owner").child(firebaseFacade.getUid()).setValue(sessionName, new Firebase.CompletionListener() {
                                                 @Override
                                                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                                                     if (firebaseError != null) {
@@ -101,20 +100,25 @@ public class CreateActivity extends ActionBarActivity {
                                                         editor.putString("sessionOwner", firebaseFacade.getUid());
                                                         editor.putString("sessionName", sessionName);
                                                         editor.commit();
+
                                                         startActivity(estimateIntent);
+
+
                                                     }
                                                 }
                                             });
+
+
                                         }
                                     }
                                 });
                             }
                         }
                     });
-
-
                 }
             }
+
+
             @Override
             public void onCancelled(FirebaseError firebaseError) {
             }
