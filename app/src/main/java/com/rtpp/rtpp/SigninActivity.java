@@ -1,6 +1,8 @@
 package com.rtpp.rtpp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -11,8 +13,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
+import java.util.Map;
 
 
 public class SigninActivity extends ActionBarActivity {
@@ -25,6 +31,9 @@ public class SigninActivity extends ActionBarActivity {
         final EditText email = (EditText) findViewById(R.id.etEmail);
         final EditText password = (EditText) findViewById(R.id.etPass);
         final Button btnSingIn = (Button) findViewById(R.id.btnSingIn);
+
+        final SharedPreferences sharedPref = this.getSharedPreferences("RTPP", Context.MODE_PRIVATE);
+
 
         final Intent joinstartIntent = new Intent(this, JoinStartActivity.class);
 
@@ -39,6 +48,20 @@ public class SigninActivity extends ActionBarActivity {
                         new Firebase.AuthResultHandler() {
                             @Override
                             public void onAuthenticated(AuthData authData) {
+                                ref.child("users").child(authData.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(final DataSnapshot snapshot) {
+                                        if(snapshot.getValue()!=null){
+                                            Map<String, Object> myUser = (Map<String, Object>) snapshot.getValue();
+                                            SharedPreferences.Editor editor = sharedPref.edit();
+                                            editor.putString("username", myUser.get("username").toString());
+                                            editor.commit();
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(FirebaseError firebaseError) {
+                                    }
+                                });
                                 startActivity(joinstartIntent);
                             }
 

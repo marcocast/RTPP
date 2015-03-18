@@ -33,14 +33,15 @@ public class JoinActivity extends ActionBarActivity {
 
 
         Firebase.setAndroidContext(this);
-        final EditText sessionName = (EditText) findViewById(R.id.sessionName);
+        final EditText sessionNameText = (EditText) findViewById(R.id.sessionName);
         final Intent estimateIntent = new Intent(this, EstimationActivity.class);
+
 
         final Firebase ref = new Firebase("https://rtpp.firebaseio.com");
 
         final AuthData authData = ref.getAuth();
-        final Map<String, String> post1 = new HashMap<String, String>();
-        post1.put("card", "none");
+        final Map<String, String> userName = new HashMap<String, String>();
+        userName.put("username", sharedPref.getString("username", ""));
 
         Button joinButton = (Button) findViewById(R.id.btnJoin);
         joinButton.setOnClickListener(new View.OnClickListener() {
@@ -48,22 +49,34 @@ public class JoinActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                ref.child("session-user").child(sessionName.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                final String sessionName = sessionNameText.getText().toString();
+
+                ref.child("session-owner").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(final DataSnapshot snapshot) {
                         if(snapshot.getValue()!=null){
-                            final String sessionOwner=(String)snapshot.getValue();
-                            ref.child("user-session").child(sessionOwner).child(sessionName.getText().toString()).child("participants").child(authData.getUid()).setValue(post1, new Firebase.CompletionListener() {
+                            ref.child("session-participants").child(sessionName).child(authData.getUid()).setValue(userName, new Firebase.CompletionListener() {
                                 @Override
                                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                                     if (firebaseError != null) {
-                                        Toast.makeText(JoinActivity.this, "Session could not be created.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(JoinActivity.this, "Session could not be joined.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                                     } else {
-                                        SharedPreferences.Editor editor = sharedPref.edit();
-                                        editor.putString("sessionName", sessionName.getText().toString());
-                                        editor.putString("sessionOwner", sessionOwner);
-                                        editor.commit();
-                                        startActivity(estimateIntent);
+                                        final Map<String, String> cardPost = new HashMap<String, String>();
+                                        cardPost.put("card", "none");
+                                        ref.child("session-votes").child(sessionName).child(authData.getUid()).setValue(cardPost, new Firebase.CompletionListener() {
+                                            @Override
+                                            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                                                if (firebaseError != null) {
+                                                    Toast.makeText(JoinActivity.this, "Session could not be joined.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                                                } else {
+                                                    SharedPreferences.Editor editor = sharedPref.edit();
+                                                    editor.putString("sessionOwner", authData.getUid());
+                                                    editor.putString("sessionName", sessionName);
+                                                    editor.commit();
+                                                    startActivity(estimateIntent);
+                                                }
+                                            }
+                                        });
                                     }
                                 }
                             });

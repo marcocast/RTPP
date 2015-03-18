@@ -54,7 +54,7 @@ public class CardActivity extends ActionBarActivity {
         post1.put("card", cardIndex);
 
 
-        ref.child("user-session/" + sessionOwner + "/" + sessionName + "/participants/" + authData.getUid()).updateChildren(post1);
+        ref.child("session-votes").child(sessionName).child(authData.getUid()).updateChildren(post1);
 
 
     }

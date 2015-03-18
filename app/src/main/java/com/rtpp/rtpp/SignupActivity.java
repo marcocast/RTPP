@@ -1,6 +1,8 @@
 package com.rtpp.rtpp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -29,6 +31,8 @@ public class SignupActivity extends ActionBarActivity {
         final EditText username = (EditText) findViewById(R.id.etUserName);
         final EditText password = (EditText) findViewById(R.id.etPass);
 
+        final SharedPreferences sharedPref = this.getSharedPreferences("RTPP", Context.MODE_PRIVATE);
+
         final Intent joinstartIntenet = new Intent(this, JoinStartActivity.class);
 
 
@@ -53,6 +57,9 @@ public class SignupActivity extends ActionBarActivity {
                                             new Firebase.AuthResultHandler() {
                                                 @Override
                                                 public void onAuthenticated(AuthData authData) {
+                                                    SharedPreferences.Editor editor = sharedPref.edit();
+                                                    editor.putString("username", username.getText().toString());
+                                                    editor.commit();
                                                     startActivity(joinstartIntenet);
                                                 }
 

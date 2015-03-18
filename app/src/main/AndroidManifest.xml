@@ -36,7 +36,7 @@
         <activity
             android:name=".JoinActivity"
             android:label="@string/title_activity_join"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".JoinStartActivity" >
         </activity>
         <activity
             android:name=".EstimationActivity"
@@ -46,7 +46,12 @@
         <activity
             android:name=".CardActivity"
             android:label="@string/title_activity_card"
-            android:parentActivityName=".EstimationActivity">
+            android:parentActivityName=".EstimationActivity" >
+        </activity>
+        <activity
+            android:name=".CreateActivity"
+            android:label="@string/title_activity_create"
+            android:parentActivityName=".JoinStartActivity">
         </activity>
     </application>
 

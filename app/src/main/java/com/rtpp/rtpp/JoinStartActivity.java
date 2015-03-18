@@ -39,11 +39,7 @@ public class JoinStartActivity extends ActionBarActivity {
         Button createButton = (Button) findViewById(R.id.btnCreate);
 
         final Intent joinIntent = new Intent(this, JoinActivity.class);
-        final Intent estimateIntent = new Intent(this, EstimationActivity.class);
-        Resources res = getResources();
-        final String[] sessionsNames = res.getStringArray(R.array.sessions_names);
-
-        final AuthData authData = ref.getAuth();
+        final Intent createIntent = new Intent(this, CreateActivity.class);
 
         joinButton.setOnClickListener(new View.OnClickListener() {
 
@@ -60,49 +56,7 @@ public class JoinStartActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-
-                int randomIndexName = new Random().nextInt(sessionsNames.length);
-                int randomIndex = new Random().nextInt(1000);
-                final String sessionName = sessionsNames[randomIndexName] + randomIndex;
-                final Map<String, String> post1 = new HashMap<String, String>();
-                post1.put("card", "none");
-
-                ref.child("user-session").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        if(snapshot.child(authData.getUid()).getValue()!=null){
-                            Map<String,Object> newPost=(Map<String,Object>)snapshot.child(authData.getUid()).getValue();
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.putString("sessionOwner", authData.getUid());
-                            editor.putString("sessionName", newPost.keySet().iterator().next());
-                            editor.commit();
-                            startActivity(estimateIntent);
-                        }else{
-                            ref.child("session-user").child(sessionName).setValue(authData.getUid());
-                            ref.child("user-session").child(authData.getUid()).child(sessionName).child("participants").child(authData.getUid()).setValue(post1, new Firebase.CompletionListener() {
-                                @Override
-                                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                                    if (firebaseError != null) {
-                                        Toast.makeText(JoinStartActivity.this, "\"Session could not be created.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
-                                    } else {
-                                        SharedPreferences.Editor editor = sharedPref.edit();
-                                        editor.putString("sessionOwner", authData.getUid());
-                                        editor.putString("sessionName", sessionName);
-                                        editor.commit();
-                                        startActivity(estimateIntent);
-                                    }
-                                }
-                            });
-                        }
-                    }
-                    @Override
-                    public void onCancelled(FirebaseError firebaseError) {
-                    }
-                });
-
-
-
-
+                startActivity(createIntent);
 
             }
 
