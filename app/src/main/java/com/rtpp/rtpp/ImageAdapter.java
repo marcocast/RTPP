@@ -45,17 +45,13 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     // references to our images
-    private Integer[] mThumbIds = {
-            R.drawable.card8, R.drawable.card8,
-            R.drawable.card8, R.drawable.card8,
-            R.drawable.card8, R.drawable.card8,
-            R.drawable.card8, R.drawable.card8,
-            R.drawable.card8, R.drawable.card8,
-            R.drawable.card8, R.drawable.card8,
-            R.drawable.card8, R.drawable.card8,
-            R.drawable.card8, R.drawable.card8,
-            R.drawable.card8, R.drawable.card8,
-            R.drawable.card8, R.drawable.card8,
-            R.drawable.card8, R.drawable.card8
+    public static Integer[] mThumbIds = {
+            R.drawable.card0, R.drawable.cardhalf,
+            R.drawable.card1, R.drawable.card2,
+            R.drawable.card3, R.drawable.card5,
+            R.drawable.card8, R.drawable.card13,
+            R.drawable.card20, R.drawable.card40,
+            R.drawable.card100, R.drawable.cardinfinite,
+            R.drawable.cardquestion, R.drawable.cardcoffee
     };
 }

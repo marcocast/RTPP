@@ -18,6 +18,9 @@ import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class EstimationActivity extends ActionBarActivity {
 
@@ -26,15 +29,27 @@ public class EstimationActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estimation);
 
-        Firebase.setAndroidContext(this);
+        final FirebaseFacade firebaseFacade = new FirebaseFacade(this);
+        if (!firebaseFacade.isLogged()) {
+            startActivity(new Intent(this, MainActivity.class));
+        }
 
         final SharedPreferences sharedPref = this.getSharedPreferences("RTPP", Context.MODE_PRIVATE);
+
+
+        final String sessionName = sharedPref.getString("sessionName", "");
+
+        final Map<String, Object> post1 = new HashMap<String, Object>();
+        post1.put("card", "none");
+
+        firebaseFacade.getRef().child("session-votes").child(sessionName).child(firebaseFacade.getUid()).updateChildren(post1);
+
 
         final Intent cardIntent = new Intent(this, CardActivity.class);
 
         final TextView textSessionName = (TextView)findViewById(R.id.session_name);
 
-        textSessionName.setText(sharedPref.getString("sessionName", ""));
+        textSessionName.setText(sessionName);
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(this));
@@ -46,7 +61,7 @@ public class EstimationActivity extends ActionBarActivity {
                 Toast.makeText(EstimationActivity.this, "" + position, Toast.LENGTH_SHORT).show();
 
                 SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("card", String.valueOf(position));
+                editor.putInt("card", position);
                 editor.commit();
 
                 startActivity(cardIntent);
