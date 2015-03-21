@@ -4,25 +4,69 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by marcocastigliego on 12/03/2015.
  */
 public class ImageAdapter extends BaseAdapter {
-    private Context mContext;
 
-    public ImageAdapter(Context c) {
-        mContext = c;
+    public static Map<String, Integer[]> cardsPerCardType = new HashMap<String, Integer[]>();
+
+
+    // references to our images
+    public static Integer[] standard = {
+            R.drawable.card0, R.drawable.cardhalf,
+            R.drawable.card1, R.drawable.card2,
+            R.drawable.card3, R.drawable.card5,
+            R.drawable.card8, R.drawable.card13,
+            R.drawable.card20, R.drawable.card40,
+            R.drawable.card100, R.drawable.cardinfinite,
+            R.drawable.cardquestion, R.drawable.cardcoffee
+    };
+
+
+    // references to our images
+    public static Integer[] fibonacci = {
+            R.drawable.card0, R.drawable.cardinfinite,
+            R.drawable.cardquestion, R.drawable.cardcoffee
+    };
+
+
+    // references to our images
+    public static Integer[] tshirt = {
+            R.drawable.card0, R.drawable.cardhalf,
+            R.drawable.card1, R.drawable.card2
+    };
+
+    static {
+        Map<String, Integer[]> tempCardsPerCardType = new HashMap<String, Integer[]>();
+        tempCardsPerCardType.put("Standard", standard);
+        tempCardsPerCardType.put("Fibonacci", fibonacci);
+        tempCardsPerCardType.put("T-Shirt", tshirt);
+
+        cardsPerCardType = Collections.unmodifiableMap(tempCardsPerCardType);
+    }
+
+
+    private final Context mContext;
+    private final String cardsType;
+
+    public ImageAdapter(Context mContext, String cardsType) {
+        this.mContext = mContext;
+        this.cardsType = cardsType;
     }
 
     public int getCount() {
-        return mThumbIds.length;
+        return cardsPerCardType.get(cardsType).length;
     }
 
     public Object getItem(int position) {
-        return mThumbIds[position];
+        return cardsPerCardType.get(cardsType)[position];
     }
 
     public long getItemId(int position) {
@@ -40,18 +84,9 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageResource(mThumbIds[position]);
+        imageView.setImageResource(cardsPerCardType.get(cardsType)[position]);
         return imageView;
     }
 
-    // references to our images
-    public static Integer[] mThumbIds = {
-            R.drawable.card0, R.drawable.cardhalf,
-            R.drawable.card1, R.drawable.card2,
-            R.drawable.card3, R.drawable.card5,
-            R.drawable.card8, R.drawable.card13,
-            R.drawable.card20, R.drawable.card40,
-            R.drawable.card100, R.drawable.cardinfinite,
-            R.drawable.cardquestion, R.drawable.cardcoffee
-    };
+
 }

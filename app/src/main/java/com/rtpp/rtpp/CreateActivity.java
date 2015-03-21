@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
@@ -17,6 +19,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
+import com.rtpp.rtpp.utility.RtppUtility;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,27 +47,22 @@ public class CreateActivity extends ActionBarActivity {
 
         final EditText sessionNameText = (EditText) findViewById(R.id.sessionName);
 
+        final RadioGroup radioCardsTypeGroup = (RadioGroup) findViewById(R.id.radioCardsType);
+
 
         createButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
-
-                final String sessionName = sessionNameText.getText().toString();
-
-
-
-
-                createSession(firebaseFacade, sessionName, sharedPref, estimateIntent);
-
-
+              int selectedId = radioCardsTypeGroup.getCheckedRadioButtonId();
+              RadioButton radioCardsTypeButton = (RadioButton) findViewById(selectedId);
+              createSession(firebaseFacade, RtppUtility.getTextContent(sessionNameText), sharedPref, estimateIntent, radioCardsTypeButton.getText().toString());
             }
 
         });
     }
 
-    private void createSession(final FirebaseFacade firebaseFacade, final String sessionName, final SharedPreferences sharedPref, final Intent estimateIntent) {
+    private void createSession(final FirebaseFacade firebaseFacade, final String sessionName, final SharedPreferences sharedPref, final Intent estimateIntent, final String cardsType) {
         firebaseFacade.getRef().child("session-participants").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -91,7 +89,7 @@ public class CreateActivity extends ActionBarActivity {
                                             Toast.makeText(CreateActivity.this, "Session could not be created.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                                         } else {
                                             final Map<String, String> cardType = new HashMap<String, String>();
-                                            cardType.put("type", "1");
+                                            cardType.put("cardType", cardsType);
                                             firebaseFacade.getRef().child("session-type").child(sessionName).setValue(cardType, new Firebase.CompletionListener() {
                                                 @Override
                                                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
@@ -107,7 +105,7 @@ public class CreateActivity extends ActionBarActivity {
                                                                     SharedPreferences.Editor editor = sharedPref.edit();
                                                                     editor.putString("sessionOwner", firebaseFacade.getUid());
                                                                     editor.putString("sessionName", sessionName);
-                                                                    editor.putString("sessionType", "1");
+                                                                    editor.putString("cardType", cardsType);
                                                                     editor.commit();
 
                                                                     startActivity(estimateIntent);

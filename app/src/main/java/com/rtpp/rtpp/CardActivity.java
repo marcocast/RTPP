@@ -49,7 +49,7 @@ public class CardActivity extends ActionBarActivity {
 
         final int cardIndex =  sharedPref.getInt("card", 0);
 
-        img.setImageResource(ImageAdapter.mThumbIds[cardIndex]);
+        img.setImageResource(ImageAdapter.cardsPerCardType.get(sharedPref.getString("cardType", ""))[cardIndex]);
 
         final Map<String, Object> post1 = new HashMap<String, Object>();
         post1.put("card", cardIndex);

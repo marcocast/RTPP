@@ -17,6 +17,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
+import com.rtpp.rtpp.utility.RtppUtility;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,9 +51,7 @@ public class JoinActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                final String sessionName = sessionNameText.getText().toString();
-
-                joinSession(firebaseFacade, sessionName, userName, sharedPref.edit(), estimateIntent);
+                joinSession(firebaseFacade, RtppUtility.getTextContent(sessionNameText), userName, sharedPref.edit(), estimateIntent);
             }
 
         });
@@ -81,7 +80,7 @@ public class JoinActivity extends ActionBarActivity {
                                         } else {
                                             editor.putString("sessionOwner", firebaseFacade.getUid());
                                             editor.putString("sessionName", sessionName);
-                                            editor.putString("sessionType", snapshot.child("type").getValue().toString());
+                                            editor.putString("sessionType", snapshot.child("cardType").getValue().toString());
                                             editor.commit();
                                             startActivity(estimateIntent);
                                         }

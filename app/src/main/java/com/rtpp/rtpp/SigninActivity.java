@@ -18,6 +18,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
+import com.rtpp.rtpp.utility.RtppUtility;
 
 import java.util.Map;
 
@@ -48,7 +49,7 @@ public class SigninActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                signIn(firebaseFacade.getRef(), email.getText().toString(), password.getText().toString(), sharedPref.edit(), joinstartIntent);
+                signIn(firebaseFacade.getRef(), RtppUtility.getTextContent(email), RtppUtility.getTextContent(password), sharedPref.edit(), joinstartIntent);
 
             }
 

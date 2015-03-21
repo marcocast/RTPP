@@ -15,7 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
 
 import java.util.HashMap;
@@ -51,22 +54,36 @@ public class EstimationActivity extends ActionBarActivity {
 
         textSessionName.setText(sessionName);
 
-        GridView gridview = (GridView) findViewById(R.id.gridview);
-        gridview.setAdapter(new ImageAdapter(this));
 
+        firebaseFacade.getRef().child("session-type").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                String cardsType = snapshot.child("cardType").getValue().toString();
+                GridView gridview = (GridView) findViewById(R.id.gridview);
+                gridview.setAdapter(new ImageAdapter(getApplicationContext(),cardsType));
+                gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                        Toast.makeText(EstimationActivity.this, "" + position, Toast.LENGTH_SHORT).show();
 
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putInt("card", position);
+                        editor.commit();
 
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Toast.makeText(EstimationActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+                        startActivity(cardIntent);
+                    }
+                });
+            }
 
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putInt("card", position);
-                editor.commit();
-
-                startActivity(cardIntent);
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
             }
         });
+
+
+
+
+
+
 
     }
 

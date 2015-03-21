@@ -16,6 +16,7 @@ import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
+import com.rtpp.rtpp.utility.RtppUtility;
 
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class SignupActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                signUp(firebaseFacade.getRef(),email.getText().toString(), password.getText().toString(), username.getText().toString(), sharedPref.edit(), joinstartIntenet);
+                signUp(firebaseFacade.getRef(), RtppUtility.getTextContent(email), RtppUtility.getTextContent(password), RtppUtility.getTextContent(username), sharedPref.edit(), joinstartIntenet);
 
 
             }
