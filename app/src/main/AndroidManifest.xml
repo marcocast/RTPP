@@ -60,6 +60,11 @@
             android:label="@string/title_activity_user_profile"
             android:parentActivityName=".JoinStartActivity" >
         </activity>
+        <activity
+            android:name=".EditSessionActivity"
+            android:label="@string/title_activity_edit_session"
+            android:parentActivityName=".EstimationActivity" >
+        </activity>
     </application>
 
 </manifest>

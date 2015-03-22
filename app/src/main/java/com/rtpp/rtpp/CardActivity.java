@@ -7,7 +7,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,11 +48,24 @@ public class CardActivity extends ActionBarActivity {
 
         textSessionName.setText(sessionName);
 
-        ImageView img = (ImageView) findViewById(R.id.imageCard);
+        final ImageView img = (ImageView) findViewById(R.id.imageCard);
 
         final int cardIndex =  sharedPref.getInt("card", 0);
 
-        img.setImageResource(ImageAdapter.cardsPerCardType.get(sharedPref.getString("cardType", ""))[cardIndex]);
+
+        firebaseFacade.getRef().child("session-type").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                String cardsType = snapshot.child("cardType").getValue().toString();
+                img.setImageResource(ImageAdapter.cardsPerCardType.get(cardsType)[cardIndex]);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
+
+
 
         final Map<String, Object> post1 = new HashMap<String, Object>();
         post1.put("card", cardIndex);

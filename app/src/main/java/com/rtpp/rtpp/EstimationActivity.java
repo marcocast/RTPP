@@ -15,11 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.AuthData;
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
+import com.rtpp.rtpp.utility.RtppUtility;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +43,7 @@ public class EstimationActivity extends ActionBarActivity {
 
 
         final String sessionName = sharedPref.getString("sessionName", "");
+        final String sessionOwner = sharedPref.getString("sessionOwner", "");
 
         final Map<String, Object> post1 = new HashMap<String, Object>();
         post1.put("card", "none");
@@ -48,11 +51,29 @@ public class EstimationActivity extends ActionBarActivity {
         firebaseFacade.getRef().child("session-votes").child(sessionName).child(firebaseFacade.getUid()).updateChildren(post1);
 
 
+        final Intent estimationIntent = new Intent(this, EstimationActivity.class);
+
+        final Intent joinStartIntent = new Intent(this, JoinStartActivity.class);
+
         final Intent cardIntent = new Intent(this, CardActivity.class);
+
+        final Intent editSessionIntent = new Intent(this, EditSessionActivity.class);
 
         final TextView textSessionName = (TextView)findViewById(R.id.session_name);
 
         textSessionName.setText(sessionName);
+
+        textSessionName.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if(sessionOwner != ""){
+                    startActivity(editSessionIntent);
+                }
+
+            }
+
+        });
 
 
         firebaseFacade.getRef().child("session-type").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -77,6 +98,32 @@ public class EstimationActivity extends ActionBarActivity {
             @Override
             public void onCancelled(FirebaseError firebaseError) {
             }
+        });
+
+
+
+        firebaseFacade.getRef().child("session-type").child(sessionName).addChildEventListener(new ChildEventListener() {
+            // Retrieve new posts as they are added to Firebase
+            @Override
+            public void onChildChanged(DataSnapshot snapshot, String previousChildKey) {
+                startActivity(estimationIntent);
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot snapshot, String previousChildKey) {}
+
+            @Override
+            public void onChildRemoved(DataSnapshot snapshot) {
+                startActivity(joinStartIntent);
+
+            }
+
+            @Override
+            public void onChildAdded(DataSnapshot snapshot, String previousChildKey) {}
+
+            @Override
+            public void onCancelled(FirebaseError error) {}
+
         });
 
     }

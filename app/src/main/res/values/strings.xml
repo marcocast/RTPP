@@ -27,5 +27,6 @@
     <string name="radio_t_shirt">T-Shirt</string>
     <string name="radio_fibonacci">Fibonacci</string>
     <string name="title_activity_user_profile">UserProfileActivity</string>
+    <string name="title_activity_edit_session">EditSessionActivity</string>
 
 </resources>

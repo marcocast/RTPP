@@ -79,7 +79,7 @@ public class JoinActivity extends ActionBarActivity {
                                         if (firebaseError != null) {
                                             Toast.makeText(JoinActivity.this, "Session could not be joined.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                                         } else {
-                                            editor.putString("sessionOwner", firebaseFacade.getUid());
+                                            editor.putString("sessionOwner", "");
                                             editor.putString("sessionName", sessionName);
                                             editor.putString("sessionType", snapshot.child("cardType").getValue().toString());
                                             editor.commit();
