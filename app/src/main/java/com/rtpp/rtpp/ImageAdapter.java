@@ -32,15 +32,24 @@ public class ImageAdapter extends BaseAdapter {
 
     // references to our images
     public static Integer[] fibonacci = {
-            R.drawable.card0, R.drawable.cardinfinite,
+            R.drawable.card0,
+            R.drawable.card1, R.drawable.card2,
+            R.drawable.card3, R.drawable.card5,
+            R.drawable.card8, R.drawable.card13,
+            R.drawable.card21, R.drawable.card34,
+            R.drawable.card55, R.drawable.card89,
+            R.drawable.card144,R.drawable.cardinfinite,
             R.drawable.cardquestion, R.drawable.cardcoffee
     };
 
 
     // references to our images
     public static Integer[] tshirt = {
-            R.drawable.card0, R.drawable.cardhalf,
-            R.drawable.card1, R.drawable.card2
+            R.drawable.cardxs,
+            R.drawable.cards, R.drawable.cardm,
+            R.drawable.cardl, R.drawable.cardxl,
+            R.drawable.cardxxl,R.drawable.cardinfinite,
+            R.drawable.cardquestion, R.drawable.cardcoffee
     };
 
     static {
