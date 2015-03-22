@@ -21,6 +21,7 @@ import com.firebase.client.ValueEventListener;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
 import com.rtpp.rtpp.utility.RtppUtility;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,10 +72,10 @@ public class CreateActivity extends ActionBarActivity {
                     Toast.makeText(CreateActivity.this, "Session already exists and cannot be created.", Toast.LENGTH_LONG).show();
 
                 } else {
-                    final Map<String, String> userName = new HashMap<String, String>();
-                    userName.put("username", sharedPref.getString("username", ""));
+                    final Map<String, String> timeOfJoin = new HashMap<String, String>();
+                    timeOfJoin.put("time_of_join", String.valueOf(new Date().getTime()));
 
-                    firebaseFacade.getRef().child("session-participants").child(sessionName).child(firebaseFacade.getUid()).setValue(userName, new Firebase.CompletionListener() {
+                    firebaseFacade.getRef().child("session-participants").child(sessionName).child(firebaseFacade.getUid()).setValue(timeOfJoin, new Firebase.CompletionListener() {
                         @Override
                         public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                             if (firebaseError != null) {
