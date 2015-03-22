@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -87,14 +88,13 @@ public class SignupActivity extends ActionBarActivity {
             public void onSuccess(final Map<String, Object> result) {
 
 
-
                 ref.child("users").child(result.get("uid").toString()).child("username").setValue(username, new Firebase.CompletionListener() {
                     @Override
                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                         if (firebaseError != null) {
                             Toast.makeText(SignupActivity.this, "Error creating user: " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                         } else {
-                            if(imageBitmap != null){
+                            if (imageBitmap != null) {
                                 ref.child("users").child(result.get("uid").toString()).child("photo").setValue(ExifUtils.getImageBytes(imageBitmap), new Firebase.CompletionListener() {
                                     @Override
                                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
