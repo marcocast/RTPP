@@ -15,15 +15,6 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         >
-
-        <EditText
-            android:id="@+id/etEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:hint="Email"
-            android:textColorHint="#bbbbbb"
-            android:drawableLeft="@drawable/email"/>
         <EditText
             android:id="@+id/etUserName"
             android:layout_width="match_parent"
@@ -33,16 +24,6 @@
             android:hint="User Name"
             android:textColorHint="#bbbbbb"
             android:drawableLeft="@drawable/user"/>
-        <EditText
-            android:id="@+id/etPass"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-2dp"
-            android:padding="10dp"
-            android:hint="Password"
-            android:textColorHint="#bbbbbb"
-            android:password="true"
-            android:drawableLeft="@drawable/password"/>
 
         <Button
             android:layout_marginTop="10dip"
@@ -66,7 +47,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:layout_margin="4dp"
-            android:text="Sign Up"
+            android:text="Save"
             style="@style/DefaultButtonText"
             android:background="@drawable/button_default_bg"
             />

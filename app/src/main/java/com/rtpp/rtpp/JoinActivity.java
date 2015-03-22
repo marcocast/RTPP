@@ -130,6 +130,11 @@ public class JoinActivity extends ActionBarActivity {
             return true;
         }
 
+        if (id == R.id.action_edit_profile) {
+            startActivity(new Intent(this, UserProfileActivity.class));
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 }

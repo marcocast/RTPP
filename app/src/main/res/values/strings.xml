@@ -4,6 +4,7 @@
     <string name="app_name">RTPP</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_logout">Logout</string>
+    <string name="action_edit_profile">Your Profile</string>
     <string name="title_activity_signin">SigninActivity</string>
     <string name="title_activity_signup">SignupActivity</string>
     <string name="title_activity_join_start">JoinStartActivity</string>
@@ -25,5 +26,6 @@
     <string name="radio_standard">Standard</string>
     <string name="radio_t_shirt">T-Shirt</string>
     <string name="radio_fibonacci">Fibonacci</string>
+    <string name="title_activity_user_profile">UserProfileActivity</string>
 
 </resources>

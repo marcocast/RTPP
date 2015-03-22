@@ -3,27 +3,14 @@ package com.rtpp.rtpp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.MutableData;
-import com.firebase.client.Transaction;
-import com.firebase.client.ValueEventListener;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 
 public class JoinStartActivity extends ActionBarActivity {
@@ -94,6 +81,11 @@ public class JoinStartActivity extends ActionBarActivity {
                 startActivity(new Intent(this, JoinStartActivity.class));
             }
 
+            return true;
+        }
+
+        if (id == R.id.action_edit_profile) {
+            startActivity(new Intent(this, UserProfileActivity.class));
             return true;
         }
 

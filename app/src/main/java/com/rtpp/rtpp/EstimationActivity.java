@@ -79,12 +79,6 @@ public class EstimationActivity extends ActionBarActivity {
             }
         });
 
-
-
-
-
-
-
     }
 
 
@@ -109,6 +103,11 @@ public class EstimationActivity extends ActionBarActivity {
                 firebaseFacade.logout();
                 startActivity(new Intent(this, JoinStartActivity.class));
             }
+            return true;
+        }
+
+        if (id == R.id.action_edit_profile) {
+            startActivity(new Intent(this, UserProfileActivity.class));
             return true;
         }
 
