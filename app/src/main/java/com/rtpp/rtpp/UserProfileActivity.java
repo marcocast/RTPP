@@ -7,21 +7,18 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -29,8 +26,6 @@ import com.firebase.client.ValueEventListener;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
 import com.rtpp.rtpp.utility.ExifUtils;
 import com.rtpp.rtpp.utility.RtppUtility;
-
-import java.util.Map;
 
 
 public class UserProfileActivity extends ActionBarActivity {
@@ -72,11 +67,15 @@ public class UserProfileActivity extends ActionBarActivity {
         firebaseFacade.getRef().child("users").child(firebaseFacade.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                if(snapshot.child("photo").getValue() != null) {
-                    String base64 = snapshot.child("photo").getValue().toString();
-                    byte[] imageAsBytes = Base64.decode(base64.getBytes(), base64.length());
-                    imageBitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
-                    imageview.setImageBitmap(imageBitmap);
+                if (snapshot.child("photo").getValue() != null) {
+                    try {
+                        String base64 = snapshot.child("photo").getValue().toString();
+                        byte[] imageAsBytes = Base64.decode(base64.getBytes(), base64.length());
+                        imageBitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+                        imageview.setImageBitmap(imageBitmap);
+                    } catch (Exception e) {
+                        Toast.makeText(UserProfileActivity.this, "Could not load your profile image, please load some other image. Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 }
             }
 
@@ -84,7 +83,6 @@ public class UserProfileActivity extends ActionBarActivity {
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
-
 
 
         final SharedPreferences sharedPref = this.getSharedPreferences("RTPP", Context.MODE_PRIVATE);
@@ -98,7 +96,7 @@ public class UserProfileActivity extends ActionBarActivity {
                 // in onCreate or any event where your want the user to
                 // select a file
                 Intent intent = new Intent();
-                intent.setType("image/*");
+                intent.setType("image/png");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent,
                         "Select Picture"), 1);
@@ -119,7 +117,7 @@ public class UserProfileActivity extends ActionBarActivity {
         });
     }
 
-    private void editProfile(final Firebase ref,  final String username, final SharedPreferences.Editor editor, final Intent joinstartIntenet) {
+    private void editProfile(final Firebase ref, final String username, final SharedPreferences.Editor editor, final Intent joinstartIntenet) {
         ref.child("users").child(uid).child("username").setValue(username, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
@@ -204,7 +202,6 @@ public class UserProfileActivity extends ActionBarActivity {
 
             return true;
         }
-
 
 
         return super.onOptionsItemSelected(item);

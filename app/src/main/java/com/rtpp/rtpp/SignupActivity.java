@@ -136,9 +136,14 @@ public class SignupActivity extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         if (resultCode == RESULT_OK) {
-            Uri selectedImage = imageReturnedIntent.getData();
-            imageBitmap = ExifUtils.decodeFile(getPath(selectedImage));
-            imageview.setImageBitmap(imageBitmap);
+            String path = "";
+            try {
+                path = getPath(imageReturnedIntent.getData());
+                imageBitmap = ExifUtils.decodeFile(path);
+                imageview.setImageBitmap(imageBitmap);
+            }catch(Exception e){
+                Toast.makeText(SignupActivity.this, "Could not load your image : "+path+" Please load some other image", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
