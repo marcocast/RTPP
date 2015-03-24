@@ -79,11 +79,27 @@ public class JoinActivity extends ActionBarActivity {
                                         if (firebaseError != null) {
                                             Toast.makeText(JoinActivity.this, "Session could not be joined.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                                         } else {
-                                            editor.putString("sessionOwner", "");
-                                            editor.putString("sessionName", sessionName);
-                                            editor.putString("sessionType", snapshot.child("cardType").getValue().toString());
-                                            editor.commit();
-                                            startActivity(estimateIntent);
+                                            firebaseFacade.getRef().child("session-owner").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                                @Override
+                                                public void onDataChange(final DataSnapshot snapshotOwner) {
+                                                    if(snapshotOwner.getValue().toString().equals(firebaseFacade.getUid())) {
+                                                        editor.putString("sessionOwner", firebaseFacade.getUid());
+                                                    }else{
+                                                        editor.putString("sessionOwner", "");
+                                                    }
+                                                    editor.putString("sessionName", sessionName);
+                                                    editor.putString("sessionType", snapshot.child("cardType").getValue().toString());
+                                                    editor.commit();
+                                                    startActivity(estimateIntent);
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(FirebaseError arg0) {
+                                                }
+                                            });
+
                                         }
                                     }
                                 });
@@ -91,7 +107,7 @@ public class JoinActivity extends ActionBarActivity {
                         }
                     });
                 } else {
-                    Toast.makeText(JoinActivity.this, "Session does not exist" , Toast.LENGTH_LONG).show();
+                    Toast.makeText(JoinActivity.this, "Session does not exist", Toast.LENGTH_LONG).show();
 
                 }
             }

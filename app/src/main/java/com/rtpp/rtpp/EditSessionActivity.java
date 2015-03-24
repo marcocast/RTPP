@@ -14,8 +14,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
 import com.rtpp.rtpp.utility.RtppUtility;
 
@@ -49,6 +51,28 @@ public class EditSessionActivity extends ActionBarActivity {
         sessionNameText.setText(sessionName);
 
         final RadioGroup radioCardsTypeGroup = (RadioGroup) findViewById(R.id.radioCardsType);
+
+        firebaseFacade.getRef().child("session-type").child(sessionName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot snapshot) {
+
+                String type = snapshot.child("cardType").getValue().toString();
+                if(type.equals("Standard")){
+                    RadioButton radio = (RadioButton)findViewById(R.id.radioStandard);
+                    radio.setChecked(true);
+                }else if(type.equals("Fibonacci")){
+                    RadioButton radio = (RadioButton)findViewById(R.id.radioFibonacci);
+                    radio.setChecked(true);
+                }else if(type.equals("T-Shirt")){
+                    RadioButton radio = (RadioButton)findViewById(R.id.radioTshirt);
+                    radio.setChecked(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError arg0) {
+            }
+        });
 
 
         createButton.setOnClickListener(new View.OnClickListener() {

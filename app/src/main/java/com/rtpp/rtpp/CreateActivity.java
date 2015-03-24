@@ -97,7 +97,7 @@ public class CreateActivity extends ActionBarActivity {
                                                     if (firebaseError != null) {
                                                         Toast.makeText(CreateActivity.this, "Session could not be created.  " + firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                                                     } else {
-                                                        firebaseFacade.getRef().child("session-owner").child(firebaseFacade.getUid()).setValue(sessionName, new Firebase.CompletionListener() {
+                                                        firebaseFacade.getRef().child("session-owner").child(sessionName).setValue(firebaseFacade.getUid(), new Firebase.CompletionListener() {
                                                             @Override
                                                             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                                                                 if (firebaseError != null) {
