@@ -13,7 +13,7 @@ public class RtppUtility {
         if(editText == null || editText.getText() == null){
             return "";
         }else{
-            return editText.getText().toString().trim();
+            return editText.getText().toString().toUpperCase().replaceAll(" ","-").trim();
         }
 
     }

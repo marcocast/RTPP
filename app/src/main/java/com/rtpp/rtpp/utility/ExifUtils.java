@@ -25,7 +25,7 @@ public class ExifUtils {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, o);
-        final int REQUIRED_SIZE = 300;
+        final int REQUIRED_SIZE = 200;
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
         int scale = 1;
         while (true) {
