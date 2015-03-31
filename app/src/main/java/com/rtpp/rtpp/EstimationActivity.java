@@ -80,7 +80,6 @@ public class EstimationActivity extends ActionBarActivity {
                 gridview.setAdapter(new ImageAdapter(getApplicationContext(),cardsType));
                 gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                        Toast.makeText(EstimationActivity.this, "" + position, Toast.LENGTH_SHORT).show();
 
                         SharedPreferences.Editor editor = sharedPref.edit();
                         editor.putInt("card", position);
