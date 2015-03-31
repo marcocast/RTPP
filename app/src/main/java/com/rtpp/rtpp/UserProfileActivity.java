@@ -25,7 +25,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
 import com.rtpp.rtpp.utility.ExifUtils;
-import com.rtpp.rtpp.utility.RtppUtility;
+import com.rtpp.rtpp.utility.TextUtility;
 
 
 public class UserProfileActivity extends ActionBarActivity {
@@ -109,7 +109,7 @@ public class UserProfileActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                editProfile(firebaseFacade.getRef(), RtppUtility.getTextContent(username), sharedPref.edit(), joinstartIntenet);
+                editProfile(firebaseFacade.getRef(), TextUtility.getLoginTextContent(username), sharedPref.edit(), joinstartIntenet);
 
 
             }
@@ -147,23 +147,15 @@ public class UserProfileActivity extends ActionBarActivity {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         if (resultCode == RESULT_OK) {
             Uri selectedImage = imageReturnedIntent.getData();
-            imageBitmap = ExifUtils.decodeFile(getPath(selectedImage));
+            imageBitmap = ExifUtils.decodeFile(getImagePath(selectedImage));
             imageview.setImageBitmap(imageBitmap);
         }
     }
 
-
-    /**
-     * helper to retrieve the path of an image URI
-     */
-    public String getPath(Uri uri) {
-        // just some safety built in
+    private String getImagePath(Uri uri) {
         if (uri == null) {
-            // TODO perform some logging or show user feedback
             return null;
         }
-        // try to retrieve the image from the media store first
-        // this will only work for images selected from gallery
         String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         if (cursor != null) {
@@ -172,26 +164,20 @@ public class UserProfileActivity extends ActionBarActivity {
             cursor.moveToFirst();
             return cursor.getString(column_index);
         }
-        // this is our fallback here
         return uri.getPath();
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_user_profile, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
 
             final FirebaseFacade firebaseFacade = new FirebaseFacade(this);

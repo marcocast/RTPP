@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,7 +16,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
-import com.rtpp.rtpp.utility.RtppUtility;
+import com.rtpp.rtpp.utility.TextUtility;
 
 import java.util.Map;
 
@@ -49,7 +47,7 @@ public class SigninActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                signIn(firebaseFacade.getRef(), RtppUtility.getTextContent(email), RtppUtility.getTextContent(password), sharedPref.edit(), joinstartIntent);
+                signIn(firebaseFacade.getRef(), TextUtility.getLoginTextContent(email), TextUtility.getLoginTextContent(password), sharedPref.edit(), joinstartIntent);
 
             }
 

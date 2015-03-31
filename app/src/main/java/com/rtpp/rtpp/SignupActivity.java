@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,7 +20,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
 import com.rtpp.rtpp.utility.ExifUtils;
-import com.rtpp.rtpp.utility.RtppUtility;
+import com.rtpp.rtpp.utility.TextUtility;
 
 import java.util.Map;
 
@@ -58,8 +57,6 @@ public class SignupActivity extends ActionBarActivity {
 
             public void onClick(View arg0) {
 
-                // in onCreate or any event where your want the user to
-                // select a file
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -74,7 +71,7 @@ public class SignupActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                signUp(firebaseFacade.getRef(), RtppUtility.getTextContent(email), RtppUtility.getTextContent(password), RtppUtility.getTextContent(username), sharedPref.edit(), joinstartIntenet);
+                signUp(firebaseFacade.getRef(), TextUtility.getLoginTextContent(email), TextUtility.getLoginTextContent(password), TextUtility.getLoginTextContent(username), sharedPref.edit(), joinstartIntenet);
 
 
             }
@@ -138,7 +135,7 @@ public class SignupActivity extends ActionBarActivity {
         if (resultCode == RESULT_OK) {
             String path = "";
             try {
-                path = getPath(imageReturnedIntent.getData());
+                path = getImagePath(imageReturnedIntent.getData());
                 imageBitmap = ExifUtils.decodeFile(path);
                 imageview.setImageBitmap(imageBitmap);
             }catch(Exception e){
@@ -148,17 +145,11 @@ public class SignupActivity extends ActionBarActivity {
     }
 
 
-    /**
-     * helper to retrieve the path of an image URI
-     */
-    public String getPath(Uri uri) {
-        // just some safety built in
+
+    private String getImagePath(Uri uri) {
         if (uri == null) {
-            // TODO perform some logging or show user feedback
             return null;
         }
-        // try to retrieve the image from the media store first
-        // this will only work for images selected from gallery
         String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         if (cursor != null) {
@@ -167,9 +158,9 @@ public class SignupActivity extends ActionBarActivity {
             cursor.moveToFirst();
             return cursor.getString(column_index);
         }
-        // this is our fallback here
         return uri.getPath();
     }
+
 
 
 }

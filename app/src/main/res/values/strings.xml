@@ -10,16 +10,10 @@
     <string name="title_activity_join_start">JoinStartActivity</string>
     <string name="title_activity_join">JoinActivity</string>
     <string name="title_activity_estimation">EstimationActivity</string>
+    <string name="join">Join</string>
+    <string name="start">Start</string>
 
 
-    <string-array name="sessions_names">
-        <item>falcon</item>
-        <item>lion</item>
-        <item>tiger</item>
-        <item>bear</item>
-        <item>fish</item>
-
-    </string-array>
     <string name="title_activity_card">CardActivity</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_create">CreateActivity</string>
@@ -28,5 +22,8 @@
     <string name="radio_fibonacci">Fibonacci</string>
     <string name="title_activity_user_profile">UserProfileActivity</string>
     <string name="title_activity_edit_session">EditSessionActivity</string>
+    <string name="existing_session_name">Existing session name</string>
+
+
 
 </resources>

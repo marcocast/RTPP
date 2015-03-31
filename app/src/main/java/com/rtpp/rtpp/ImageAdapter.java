@@ -17,8 +17,6 @@ public class ImageAdapter extends BaseAdapter {
 
     public static Map<String, Integer[]> cardsPerCardType = new HashMap<String, Integer[]>();
 
-
-    // references to our images
     public static Integer[] standard = {
             R.drawable.card0, R.drawable.cardhalf,
             R.drawable.card1, R.drawable.card2,
@@ -30,7 +28,6 @@ public class ImageAdapter extends BaseAdapter {
     };
 
 
-    // references to our images
     public static Integer[] fibonacci = {
             R.drawable.card0,
             R.drawable.card1, R.drawable.card2,
@@ -42,8 +39,6 @@ public class ImageAdapter extends BaseAdapter {
             R.drawable.cardquestion, R.drawable.cardcoffee
     };
 
-
-    // references to our images
     public static Integer[] tshirt = {
             R.drawable.cardxs,
             R.drawable.cards, R.drawable.cardm,
@@ -82,10 +77,9 @@ public class ImageAdapter extends BaseAdapter {
         return 0;
     }
 
-    // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
-        if (convertView == null) {  // if it's not recycled, initialize some attributes
+        if (convertView == null) {
             imageView = new ImageView(mContext);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setPadding(8, 8, 8, 8);

@@ -16,16 +16,14 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:background="@drawable/linearlayout_bg"
-        android:padding="10dp"
+        android:padding="15dp"
         >
 
         <Button
             android:id="@+id/btnJoin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_margin="4dp"
-            android:text="Join"
+            android:text="@string/join"
             android:background="@drawable/button_default_bg"
             style="@style/DefaultButtonText"
             />
@@ -33,9 +31,7 @@
             android:id="@+id/btnCreate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_margin="4dp"
-            android:text="Start"
+            android:text="@string/start"
             style="@style/DefaultButtonText"
             android:background="@drawable/button_default_bg"
             />

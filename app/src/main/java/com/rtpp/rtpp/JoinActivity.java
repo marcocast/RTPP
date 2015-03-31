@@ -17,7 +17,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
-import com.rtpp.rtpp.utility.RtppUtility;
+import com.rtpp.rtpp.utility.TextUtility;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -52,7 +52,7 @@ public class JoinActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                joinSession(firebaseFacade, RtppUtility.getTextContent(sessionNameText), timeOfJoin, sharedPref.edit(), estimateIntent);
+                joinSession(firebaseFacade, TextUtility.getSessionTextContent(sessionNameText), timeOfJoin, sharedPref.edit(), estimateIntent);
             }
 
         });
@@ -122,19 +122,15 @@ public class JoinActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_join, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
 
             final FirebaseFacade firebaseFacade = new FirebaseFacade(this);

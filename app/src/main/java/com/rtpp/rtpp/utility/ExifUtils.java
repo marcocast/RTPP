@@ -20,12 +20,14 @@ import java.lang.reflect.Method;
 
 public class ExifUtils {
 
+    private static final int REQUIRED_SIZE = 400;
+
     public static Bitmap decodeFile(String filePath) {
 
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, o);
-        final int REQUIRED_SIZE = 200;
+
         int width_tmp = o.outWidth, height_tmp = o.outHeight;
         int scale = 1;
         while (true) {
@@ -125,21 +127,7 @@ public class ExifUtils {
                 orientation = (Integer) getAttributeInt.invoke(exifInstance,
                         new Object[]{tagOrientation, 1});
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

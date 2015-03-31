@@ -12,7 +12,7 @@ import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.rtpp.rtpp.firebase.FirebaseFacade;
 
-//http://hmkcode.com/android-designing-a-login-screen-sign-in-sign-up-screens/
+//inspiration for the signin and signup page has been taken from : http://hmkcode.com/android-designing-a-login-screen-sign-in-sign-up-screens/
 public class MainActivity extends ActionBarActivity {
 
 
